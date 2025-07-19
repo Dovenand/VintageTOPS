@@ -1,13 +1,909 @@
-<html>
-
+<!DOCTYPE html>
+<html lang="ru">
 <head>
-<title>
-Сайт сервера
-</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой сайт</title>
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --bg-primary: #0f0f23;
+            --bg-secondary: #1a1a2e;
+            --bg-tertiary: #16213e;
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+            --hover: #1e293b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-menu a {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+
+        .nav-menu a:hover, .nav-menu a.active {
+            color: var(--primary-color);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .admin-btn {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .admin-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        /* Main content */
+        main {
+            margin-top: 80px;
+            min-height: calc(100vh - 80px);
+            padding: 2rem 0;
+        }
+
+        .page-content {
+            display: none;
+        }
+
+        .page-content.active {
+            display: block;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--primary-color), #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* News section */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .news-item {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .news-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .news-item h3 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .news-item .date {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Admin panel */
+        .admin-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            z-index: 2000;
+        }
+
+        .admin-panel.active {
+            display: flex;
+        }
+
+        .admin-content {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            max-width: 1000px;
+            width: 90%;
+            max-height: 90%;
+            margin: auto;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .admin-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-header h2 {
+            color: var(--primary-color);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .admin-tabs {
+            display: flex;
+            background: var(--bg-tertiary);
+        }
+
+        .admin-tab {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .admin-tab.active {
+            background: var(--bg-secondary);
+            color: var(--primary-color);
+        }
+
+        .admin-tab-content {
+            padding: 2rem;
+            display: none;
+        }
+
+        .admin-tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .editor-toolbar {
+            background: var(--bg-tertiary);
+            padding: 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .editor-btn {
+            padding: 0.25rem 0.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .editor-btn:hover {
+            background: var(--hover);
+        }
+
+        .content-editor {
+            border-radius: 0 0 8px 8px !important;
+            border-top: none !important;
+            min-height: 200px;
+        }
+
+        .btn {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--hover);
+        }
+
+        .menu-items {
+            list-style: none;
+        }
+
+        .menu-item {
+            background: var(--bg-tertiary);
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .menu-item-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-small {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .color-preview {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            display: inline-block;
+            margin-left: 0.5rem;
+        }
+
+        .page-item {
+            background: var(--bg-tertiary);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+        }
+
+        .page-item h4 {
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-actions {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .admin-content {
+                width: 95%;
+                max-height: 95%;
+            }
+            
+            .admin-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .admin-tab {
+                flex: 1;
+                min-width: 120px;
+            }
+        }
+    </style>
 </head>
-
-
 <body>
-</body>
+    <header>
+        <nav class="container">
+            <div class="logo">Мой сайт</div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#home" class="nav-link active">Главная</a></li>
+                <li><a href="#news" class="nav-link">Новости</a></li>
+            </ul>
+            <button class="admin-btn" onclick="openAdmin()">Админ</button>
+        </nav>
+    </header>
 
-</html>
+    <main class="container">
+        <div id="home" class="page-content active">
+            <div class="hero">
+                <h1>Добро пожаловать</h1>
+                <p>Это ваш персональный сайт с удобной системой управления контентом. Создавайте страницы, публикуйте новости и настраивайте внешний вид прямо из админ-панели.</p>
+            </div>
+        </div>
+
+        <div id="news" class="page-content">
+            <h2>Новости</h2>
+            <div class="news-grid" id="newsGrid">
+                <!-- News items will be inserted here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Admin Panel -->
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-content">
+            <div class="admin-header">
+                <h2>Панель администратора</h2>
+                <button class="close-btn" onclick="closeAdmin()">&times;</button>
+            </div>
+            
+            <div class="admin-tabs">
+                <button class="admin-tab active" onclick="showTab('settings')">Настройки</button>
+                <button class="admin-tab" onclick="showTab('menu')">Меню</button>
+                <button class="admin-tab" onclick="showTab('news')">Новости</button>
+                <button class="admin-tab" onclick="showTab('pages')">Страницы</button>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settings-tab" class="admin-tab-content active">
+                <h3>Настройки сайта</h3>
+                <div class="form-group">
+                    <label>Название сайта:</label>
+                    <input type="text" id="siteTitle" value="Мой сайт">
+                </div>
+                <div class="form-group">
+                    <label>Основной цвет:</label>
+                    <input type="color" id="primaryColor" value="#3b82f6">
+                    <span class="color-preview" id="colorPreview"></span>
+                </div>
+                <button class="btn" onclick="saveSettings()">Сохранить настройки</button>
+            </div>
+
+            <!-- Menu Tab -->
+            <div id="menu-tab" class="admin-tab-content">
+                <h3>Управление меню</h3>
+                <div class="form-group">
+                    <label>Название пункта меню:</label>
+                    <input type="text" id="menuItemName" placeholder="Например: О нас">
+                </div>
+                <div class="form-group">
+                    <label>ID страницы (на английском):</label>
+                    <input type="text" id="menuItemId" placeholder="Например: about">
+                </div>
+                <button class="btn" onclick="addMenuItem()">Добавить пункт меню</button>
+                
+                <h4 style="margin-top: 2rem; margin-bottom: 1rem;">Текущие пункты меню:</h4>
+                <ul class="menu-items" id="menuItems">
+                    <!-- Menu items will be inserted here -->
+                </ul>
+            </div>
+
+            <!-- News Tab -->
+            <div id="news-tab" class="admin-tab-content">
+                <h3>Управление новостями</h3>
+                <div class="form-group">
+                    <label>Заголовок новости:</label>
+                    <input type="text" id="newsTitle" placeholder="Введите заголовок">
+                </div>
+                <div class="form-group">
+                    <label>Содержание новости:</label>
+                    <div class="editor-toolbar">
+                        <button class="editor-btn" onclick="formatText('bold')"><b>B</b></button>
+                        <button class="editor-btn" onclick="formatText('italic')"><i>I</i></button>
+                        <button class="editor-btn" onclick="formatText('underline')"><u>U</u></button>
+                    </div>
+                    <textarea id="newsContent" class="content-editor" placeholder="Введите содержание новости"></textarea>
+                </div>
+                <button class="btn" onclick="addNews()">Опубликовать новость</button>
+                
+                <h4 style="margin-top: 2rem; margin-bottom: 1rem;">Опубликованные новости:</h4>
+                <div id="newsList">
+                    <!-- Published news will be listed here -->
+                </div>
+            </div>
+
+            <!-- Pages Tab -->
+            <div id="pages-tab" class="admin-tab-content">
+                <h3>Управление страницами</h3>
+                <div class="form-group">
+                    <label>Название страницы:</label>
+                    <input type="text" id="pageTitle" placeholder="Введите название">
+                </div>
+                <div class="form-group">
+                    <label>ID страницы:</label>
+                    <input type="text" id="pageId" placeholder="page-id">
+                </div>
+                <div class="form-group">
+                    <label>Содержание страницы:</label>
+                    <div class="editor-toolbar">
+                        <button class="editor-btn" onclick="formatPageText('bold')"><b>B</b></button>
+                        <button class="editor-btn" onclick="formatPageText('italic')"><i>I</i></button>
+                        <button class="editor-btn" onclick="formatPageText('underline')"><u>U</u></button>
+                        <button class="editor-btn" onclick="insertHeading()">H1</button>
+                        <button class="editor-btn" onclick="insertParagraph()">P</button>
+                    </div>
+                    <textarea id="pageContent" class="content-editor" placeholder="Введите содержание страницы"></textarea>
+                </div>
+                <button class="btn" onclick="addPage()">Создать страницу</button>
+                
+                <h4 style="margin-top: 2rem; margin-bottom: 1rem;">Созданные страницы:</h4>
+                <div id="pagesList">
+                    <!-- Created pages will be listed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let menuItems = [
+            {name: 'Главная', id: 'home'},
+            {name: 'Новости', id: 'news'}
+        ];
+        
+        let newsItems = [];
+        let pages = [];
+        let currentEditingNews = null;
+        let currentEditingPage = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            updateColorPreview();
+            renderMenu();
+            renderNews();
+            renderPages();
+            
+            // Navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = this.getAttribute('href').substring(1);
+                    showPage(target);
+                    
+                    // Update active nav item
+                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        });
+
+        // Admin functions
+        function openAdmin() {
+            document.getElementById('adminPanel').classList.add('active');
+        }
+
+        function closeAdmin() {
+            document.getElementById('adminPanel').classList.remove('active');
+        }
+
+        function showTab(tabName) {
+            document.querySelectorAll('.admin-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.admin-tab-content').forEach(content => content.classList.remove('active'));
+            
+            document.querySelector(`[onclick="showTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+
+        // Settings functions
+        function saveSettings() {
+            const title = document.getElementById('siteTitle').value;
+            const color = document.getElementById('primaryColor').value;
+            
+            document.querySelector('.logo').textContent = title;
+            document.documentElement.style.setProperty('--primary-color', color);
+            
+            saveData();
+            alert('Настройки сохранены!');
+        }
+
+        function updateColorPreview() {
+            const color = document.getElementById('primaryColor').value;
+            document.getElementById('colorPreview').style.backgroundColor = color;
+        }
+
+        document.getElementById('primaryColor').addEventListener('input', updateColorPreview);
+
+        // Menu functions
+        function addMenuItem() {
+            const name = document.getElementById('menuItemName').value;
+            const id = document.getElementById('menuItemId').value;
+            
+            if (name && id) {
+                menuItems.push({name, id});
+                renderMenu();
+                document.getElementById('menuItemName').value = '';
+                document.getElementById('menuItemId').value = '';
+                saveData();
+            }
+        }
+
+        function removeMenuItem(index) {
+            if (index > 1) { // Protect home and news
+                menuItems.splice(index, 1);
+                renderMenu();
+                saveData();
+            }
+        }
+
+        function renderMenu() {
+            const navMenu = document.getElementById('navMenu');
+            const menuItemsList = document.getElementById('menuItems');
+            
+            // Update navigation
+            navMenu.innerHTML = '';
+            menuItems.forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="#${item.id}" class="nav-link">${item.name}</a>`;
+                navMenu.appendChild(li);
+            });
+            
+            // Update admin menu list
+            menuItemsList.innerHTML = '';
+            menuItems.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.className = 'menu-item';
+                li.innerHTML = `
+                    <span>${item.name} (${item.id})</span>
+                    <div class="menu-item-actions">
+                        ${index > 1 ? `<button class="btn btn-secondary btn-small" onclick="removeMenuItem(${index})">Удалить</button>` : '<span style="color: var(--text-secondary); font-size: 0.8rem;">Системная страница</span>'}
+                    </div>
+                `;
+                menuItemsList.appendChild(li);
+            });
+            
+            // Re-attach navigation listeners
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = this.getAttribute('href').substring(1);
+                    showPage(target);
+                    
+                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        }
+
+        // News functions
+        function addNews() {
+            const title = document.getElementById('newsTitle').value;
+            const content = document.getElementById('newsContent').value;
+            
+            if (title && content) {
+                const news = {
+                    id: Date.now(),
+                    title,
+                    content,
+                    date: new Date().toLocaleDateString('ru-RU')
+                };
+                
+                if (currentEditingNews !== null) {
+                    newsItems[currentEditingNews] = news;
+                    currentEditingNews = null;
+                } else {
+                    newsItems.unshift(news);
+                }
+                
+                renderNews();
+                document.getElementById('newsTitle').value = '';
+                document.getElementById('newsContent').value = '';
+                saveData();
+            }
+        }
+
+        function editNews(index) {
+            const news = newsItems[index];
+            document.getElementById('newsTitle').value = news.title;
+            document.getElementById('newsContent').value = news.content;
+            currentEditingNews = index;
+            
+            showTab('news');
+        }
+
+        function deleteNews(index) {
+            if (confirm('Удалить эту новость?')) {
+                newsItems.splice(index, 1);
+                renderNews();
+                saveData();
+            }
+        }
+
+        function renderNews() {
+            const newsGrid = document.getElementById('newsGrid');
+            const newsList = document.getElementById('newsList');
+            
+            // Render news on the site
+            newsGrid.innerHTML = '';
+            newsItems.forEach(news => {
+                const div = document.createElement('div');
+                div.className = 'news-item';
+                div.innerHTML = `
+                    <h3>${news.title}</h3>
+                    <div class="date">${news.date}</div>
+                    <p>${news.content.substring(0, 150)}${news.content.length > 150 ? '...' : ''}</p>
+                `;
+                newsGrid.appendChild(div);
+            });
+            
+            // Render news list in admin
+            newsList.innerHTML = '';
+            newsItems.forEach((news, index) => {
+                const div = document.createElement('div');
+                div.className = 'page-item';
+                div.innerHTML = `
+                    <h4>${news.title}</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">${news.date}</p>
+                    <p>${news.content.substring(0, 100)}${news.content.length > 100 ? '...' : ''}</p>
+                    <div class="page-actions">
+                        <button class="btn btn-secondary btn-small" onclick="editNews(${index})">Редактировать</button>
+                        <button class="btn btn-secondary btn-small" onclick="deleteNews(${index})">Удалить</button>
+                    </div>
+                `;
+                newsList.appendChild(div);
+            });
+        }
+
+        // Page functions
+        function addPage() {
+            const title = document.getElementById('pageTitle').value;
+            const id = document.getElementById('pageId').value;
+            const content = document.getElementById('pageContent').value;
+            
+            if (title && id && content) {
+                const page = {
+                    id,
+                    title,
+                    content
+                };
+                
+                if (currentEditingPage !== null) {
+                    pages[currentEditingPage] = page;
+                    currentEditingPage = null;
+                } else {
+                    pages.push(page);
+                }
+                
+                renderPages();
+                createPageElement(page);
+                document.getElementById('pageTitle').value = '';
+                document.getElementById('pageId').value = '';
+                document.getElementById('pageContent').value = '';
+                saveData();
+            }
+        }
+
+        function editPage(index) {
+            const page = pages[index];
+            document.getElementById('pageTitle').value = page.title;
+            document.getElementById('pageId').value = page.id;
+            document.getElementById('pageContent').value = page.content;
+            currentEditingPage = index;
+            
+            showTab('pages');
+        }
+
+        function deletePage(index) {
+            if (confirm('Удалить эту страницу?')) {
+                const page = pages[index];
+                
+                // Remove from pages array
+                pages.splice(index, 1);
+                
+                // Remove page element
+                const pageElement = document.getElementById(page.id);
+                if (pageElement) {
+                    pageElement.remove();
+                }
+                
+                // Remove from menu if exists
+                const menuIndex = menuItems.findIndex(item => item.id === page.id);
+                if (menuIndex > 1) { // Don't remove system pages
+                    menuItems.splice(menuIndex, 1);
+                    renderMenu();
+                }
+                
+                renderPages();
+                saveData();
+            }
+        }
+
+        function createPageElement(page) {
+            // Remove existing page element if it exists
+            const existingPage = document.getElementById(page.id);
+            if (existingPage) {
+                existingPage.remove();
+            }
+            
+            // Create new page element
+            const main = document.querySelector('main');
+            const div = document.createElement('div');
+            div.id = page.id;
+            div.className = 'page-content';
+            div.innerHTML = `
+                <h2>${page.title}</h2>
+                <div style="margin-top: 2rem; line-height: 1.8;">${page.content.replace(/\n/g, '<br>')}</div>
+            `;
+            main.appendChild(div);
+        }
+
+        function renderPages() {
+            const pagesList = document.getElementById('pagesList');
+            
+            // Render pages list in admin
+            pagesList.innerHTML = '';
+            pages.forEach((page, index) => {
+                const div = document.createElement('div');
+                div.className = 'page-item';
+                div.innerHTML = `
+                    <h4>${page.title}</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem;">ID: ${page.id}</p>
+                    <p>${page.content.substring(0, 100)}${page.content.length > 100 ? '...' : ''}</p>
+                    <div class="page-actions">
+                        <button class="btn btn-secondary btn-small" onclick="editPage(${index})">Редактировать</button>
+                        <button class="btn btn-secondary btn-small" onclick="deletePage(${index})">Удалить</button>
+                    </div>
+                `;
+                pagesList.appendChild(div);
+            });
+        }
+
+        // Page navigation
+        function showPage(pageId) {
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+            }
+        }
+
+        // Text formatting functions
+        function formatText(command) {
+            const textarea = document.getElementById('newsContent');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(start, end);
+            
+            if (selectedText) {
+                let formattedText;
+                switch(command) {
+                    case 'bold':
+                        formattedText = `<strong>${selectedText}</strong>`;
+                        break;
+                    case 'italic':
+                        formattedText = `<em>${selectedText}</em>`;
+                        break;
+                    case 'underline':
+                        formattedText = `<u>${selectedText}</u>`;
+                        break;
+                }
+                
+                textarea.value = textarea.value.substring(0, start) + formattedText + textarea.value.substring(end);
+                textarea.focus();
+            }
+        }
+
+        function formatPageText(command) {
+            const textarea = document.getElementById('pageContent');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(start, end);
+            
+            if (selectedText) {
+                let formattedText;
+                switch(command) {
+                    case 'bold':
+                        formattedText = `<strong>${selectedText}</strong>`;
+                        break;
+                    case 'italic':
+                        formattedText = `<em>${selectedText}</em>`;
+                        break;
+                    case 'underline':
+                        formattedText = `<u>${selectedText}</u>`;
+                        break;
+                }
+                
+                textarea.value = textarea.value.substring(0, start) + formattedText + textarea.value.substring(end);
+                textarea.focus();
+            }
+        }
+
+        function insertHe
