@@ -906,4 +906,143 @@
             }
         }
 
-        function insertHe
+        function insertHeading() {
+            const textarea = document.getElementById('pageContent');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(start, end);
+            
+            const headingText = selectedText || 'Заголовок';
+            const formattedText = `<h2>${headingText}</h2>`;
+            
+            textarea.value = textarea.value.substring(0, start) + formattedText + textarea.value.substring(end);
+            textarea.focus();
+        }
+
+        function insertParagraph() {
+            const textarea = document.getElementById('pageContent');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const selectedText = textarea.value.substring(start, end);
+            
+            const paragraphText = selectedText || 'Текст параграфа';
+            const formattedText = `<p>${paragraphText}</p>`;
+            
+            textarea.value = textarea.value.substring(0, start) + formattedText + textarea.value.substring(end);
+            textarea.focus();
+        }
+
+        // Data persistence functions
+        function saveData() {
+            const data = {
+                siteTitle: document.getElementById('siteTitle').value,
+                primaryColor: document.getElementById('primaryColor').value,
+                menuItems: menuItems,
+                newsItems: newsItems,
+                pages: pages
+            };
+            
+            // In a real application, you would save to a database
+            // For now, we'll use a simple object to store data in memory
+            window.siteData = data;
+        }
+
+        function loadData() {
+            // In a real application, you would load from a database
+            // For now, we'll check if data exists in memory
+            if (window.siteData) {
+                const data = window.siteData;
+                
+                document.getElementById('siteTitle').value = data.siteTitle || 'Мой сайт';
+                document.getElementById('primaryColor').value = data.primaryColor || '#3b82f6';
+                
+                // Apply loaded settings
+                document.querySelector('.logo').textContent = data.siteTitle || 'Мой сайт';
+                document.documentElement.style.setProperty('--primary-color', data.primaryColor || '#3b82f6');
+                
+                // Load menu items
+                if (data.menuItems) {
+                    menuItems = data.menuItems;
+                }
+                
+                // Load news items
+                if (data.newsItems) {
+                    newsItems = data.newsItems;
+                }
+                
+                // Load pages
+                if (data.pages) {
+                    pages = data.pages;
+                    // Create page elements
+                    pages.forEach(page => {
+                        createPageElement(page);
+                    });
+                }
+            }
+        }
+
+        // Close admin panel when clicking outside
+        document.getElementById('adminPanel').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAdmin();
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Alt + A to open admin
+            if (e.altKey && e.key === 'a') {
+                e.preventDefault();
+                openAdmin();
+            }
+            
+            // Escape to close admin
+            if (e.key === 'Escape') {
+                closeAdmin();
+            }
+        });
+
+        // Auto-generate page ID from title
+        document.getElementById('pageTitle').addEventListener('input', function() {
+            const title = this.value;
+            const id = title.toLowerCase()
+                .replace(/[а-я]/g, function(match) {
+                    const map = {
+                        'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo',
+                        'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
+                        'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
+                        'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch', 'ъ': '',
+                        'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya'
+                    };
+                    return map[match] || match;
+                })
+                .replace(/[^a-z0-9]/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '');
+            
+            document.getElementById('pageId').value = id;
+        });
+
+        // Auto-generate menu item ID from name
+        document.getElementById('menuItemName').addEventListener('input', function() {
+            const name = this.value;
+            const id = name.toLowerCase()
+                .replace(/[а-я]/g, function(match) {
+                    const map = {
+                        'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo',
+                        'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
+                        'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
+                        'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch', 'ъ': '',
+                        'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya'
+                    };
+                    return map[match] || match;
+                })
+                .replace(/[^a-z0-9]/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-|-$/g, '');
+            
+            document.getElementById('menuItemId').value = id;
+        });
+    </script>
+</body>
+</html>
